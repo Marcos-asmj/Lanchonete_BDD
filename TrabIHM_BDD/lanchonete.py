@@ -3,23 +3,23 @@ import secrets
 import json
 
 FOTOS = [
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Jim1.jpg",
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Jim2.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Jim1.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Jim2.jpg",
 
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Kevin1.jpg",
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Kevin2.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Kevin1.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Kevin2.jpg",
 
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Michael1.jpg",
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Michael2.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Michael1.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Michael2.jpg",
 
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Pam1.jpg",
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Pam2.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Pam1.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Pam2.jpg",
 
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Ryan2.jpg",
-    "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/faces/Ryan2.jpg"
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Ryan2.jpg",
+    "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/faces/Ryan2.jpg"
 ]
 
-CONFIGURACAO = "C:/Users/Marcos/Documents/labs/TrabIHM_BDD/configuracao.json"
+CONFIGURACAO = "/home/marcos/Área de Trabalho/Lanchonete_BDD-main/TrabIHM_BDD/configuracao.json"
 
 def preparar():
     global configuracao
@@ -41,7 +41,10 @@ def simular_entrada(foto):
     return visitante
 
 def reconhecer_cliente(visitante, configuracao):
-
+    colesterol = 0
+    pressao = 0
+    cliente_colesterol = 0
+    cliente_pressao = 0
     print("Iniciando reconhecimento de cliente...")
     foto_visitante = face_recognition.load_image_file(visitante["foto"])
     encoding_foto_visitante = face_recognition.face_encodings(foto_visitante)[0]
@@ -61,8 +64,16 @@ def reconhecer_cliente(visitante, configuracao):
 
         if total_reconhecimentos/len(fotos_banco) > 0.7:
             reconhecido = True
+            colesterol = cliente["colesterol"]
+            pressao = cliente["pressao"]
+            if colesterol == 1:
+                cliente_colesterol += 1
+            if pressao == 1:
+                cliente_pressao += 1
+                
 
-    return reconhecido, visitante
+
+    return reconhecido, visitante, colesterol, pressao, cliente_colesterol, cliente_pressao
 
 def imprimir_cliente(cliente):
     print("nome:", cliente["clientes"]["nome"])
@@ -79,41 +90,16 @@ def imprimir_cliente(cliente):
 
 def reconhecer_visitante(clientes_reconhecidos):
     visitante = simular_entrada()
-    reconhecido, paciente = reconhecer_cliente(visitante)
+    reconhecido, cliente = reconhecer_cliente(visitante. configuracao)
     if reconhecido:
         id_cliente = secrets.token_hex(nbytes=16).upper()
-        clientes_reconhecidos[id_cliente] = paciente
+        clientes_reconhecidos[id_cliente] = cliente
 
         print("Cliente reconhecido: ")
-        imprimir_cliente(paciente)
+        imprimir_cliente(cliente)
 
     else:
         print("Cliente não reconhecido.")
-
-def identificar_colesterol(pacientes_reconhecidos):
-    total_clientes_colesterol = 0
-
-    if len(pacientes_reconhecidos):
-        for id_atendimento, paciente in list(pacientes_reconhecidos.items()):
-            if paciente["clientes"]["colesterol"] == 1:
-                total_clientes_colesterol += 1
-                
-                pacientes_reconhecidos.pop(id_atendimento)
-
-    return total_clientes_colesterol
-
-def identificar_pressao(pacientes_reconhecidos):
-    total_clientes_pressao = 0
-
-    if len(pacientes_reconhecidos):
-        for id_atendimento, paciente in list(pacientes_reconhecidos.items()):
-            if paciente["clientes"]["pressao"] == 1:
-                total_clientes_pressao += 1
-                
-                pacientes_reconhecidos.pop(id_atendimento)
-
-    return total_clientes_pressao
- 
 
 def recomendar_cardapio(clientes_reconhecidos):
     clientes_que_receberam_recomendacao = 0

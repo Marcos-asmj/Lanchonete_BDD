@@ -1,10 +1,10 @@
-from behave import when, then
+from behave import then
 from lanchonete import *
 
-@when("checar se o cliente tem problema de pressao")
+@then("um problema de pressao deve ser encontrado")
 def when_checar_pressao(context):
-    context.total_clientes_pressao = identificar_pressao(context.clientes_reconhecidos)
+    assert context.pressao == 1
 
-@then("{numero_de_clientes_pressao} cliente apresenta problema de pressao")
-def then_verificar_clientes_pressao(context, numero_de_clientes_pressao):
-    assert context.total_clientes_pressao == int(numero_de_clientes_pressao)
+@then("um problema de pressao nao deve ser encontrado")
+def when_checar_pressao(context):
+    assert context.pressao == 0
